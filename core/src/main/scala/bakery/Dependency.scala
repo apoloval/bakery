@@ -14,7 +14,14 @@ object Dependency {
   def impl(c: whitebox.Context)(annottees: c.Expr[Any]*): c.Expr[Any] = {
     import c.universe._
 
+    def flattenTypes(trees: Seq[c.Tree]): c.Tree = trees.toList match {
+      case Nil => tq""
+      case head :: Nil => head
+      case head :: tail => tq"$head with ${flattenTypes(tail)}"
+    }
+
     val dependencyType = c.prefix.tree match {
+      case q"new $name [ ( ..$tpt ) ]" => flattenTypes(tpt)
       case q"new $name [ $tpt ]" => tpt
       case _ => c.abort(c.enclosingPosition,
         "In @Module, annotation has no type parameters")
