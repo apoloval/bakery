@@ -53,20 +53,18 @@ trait SettingsModule {
 trait PaypalModule extends PaymentModule {
   this: SettingsModule =>
   
-  override def paymentProcessor: PaymentProcessor = 
-    new PaypalPaymentProcessor(this.settings)
+  override def paymentProcessor: PaymentProcessor = new PaypalPaymentProcessor(this.settings)
 }
 ```
 
-**This is the most tricky part, so please pay attention**. Using the self type references in the trait we are saying to the compiler: _"this trait is not a `SettingsModule`, but any instance of `PaypalModule` must provide valid implementation for it._ In other words, `PaypalModule` cannot be seen as `SettingsModule`, but it can consider itself as that. Thanks for that, the expression `this.settings` provides a valid instance of the `Settings` class and can be injected in `PaypalPaymentProcessor` using its constructor. 
+**This is the most tricky part, so please pay attention**. Using the self type references in the trait we are saying to the compiler: _"this trait is not a `SettingsModule`, but any trait or class extending from `PaypalModule` must provide valid implementation for it._ In other words, `PaypalModule` cannot be seen as `SettingsModule`, but it can consider itself as that. Thanks for that, the expression `this.settings` provides a valid instance of the `Settings` class and can be injected in `PaypalPaymentProcessor` using its constructor. 
 
 ## Cake Pattern using implicits
 
 If we combine the mechanism described above with implicits, we can make the Cake Pattern magic to be more declarative and less behavioral. Let's say we modify the `PaypalPaymentProcessor` as this:
 
 ```scala
-class PaypalPaymentProcessor(
-    implicit settings: Settings) extends PaymentProcessor {
+class PaypalPaymentProcessor(implicit settings: Settings) extends PaymentProcessor {
     // ... rest of the code omitted in sake of legibility
 }
 ```
@@ -103,8 +101,7 @@ Firstly, Bakery provides the `@Dependency` macro that can be used in this way:
 ```scala
 @Dependency[SettingsModule]
 trait PaypalModule extends PaymentModule {
-  override lazy val paymentProcessor: PaymentProcessor = 
-    new PaypalPaymentProcessor
+  override lazy val paymentProcessor: PaymentProcessor = new PaypalPaymentProcessor
 }
 ```
 
@@ -143,9 +140,8 @@ def paymentProcessor: PaymentProcessor
 Any module implementing it, in case the provided dependencies in turn depends on other objects, should declare them using lazy values as in:
 
 ```scala
-  // Implicitly requires `Settings` and `Metrics`
-  override lazy val paymentProcessor = new PaypalPaymentProcessor
-
+// Implicitly requires `Settings` and `Metrics`
+override lazy val paymentProcessor = new PaypalPaymentProcessor
 ```
 
 ### My module has more than one dependency
