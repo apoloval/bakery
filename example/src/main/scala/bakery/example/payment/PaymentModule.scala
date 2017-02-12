@@ -1,5 +1,8 @@
 package bakery.example.payment
 
+import bakery.Provide
+
 trait PaymentModule {
-  implicit def paymentProcessor: PaymentProcessor
+  @Provide
+  def paymentProcessor: PaymentProcessor
 }

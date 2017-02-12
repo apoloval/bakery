@@ -1,5 +1,8 @@
 package bakery.example.config
 
+import bakery.Provide
+
 trait SettingsModule {
-  implicit def settings: Settings
+  @Provide
+  def settings: Settings
 }

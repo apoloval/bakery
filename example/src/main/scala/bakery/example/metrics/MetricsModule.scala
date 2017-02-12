@@ -1,5 +1,8 @@
 package bakery.example.metrics
 
+import bakery.Provide
+
 trait MetricsModule {
-  implicit def metrics: Metrics
+  @Provide
+  def metrics: Metrics
 }
