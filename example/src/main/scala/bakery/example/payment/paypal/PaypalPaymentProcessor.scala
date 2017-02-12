@@ -1,3 +1,20 @@
+/*
+ * Copyright 2017 Alvaro Polo Valdenebro
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
 package bakery.example.payment.paypal
 
 import bakery.example.config.Settings
@@ -10,7 +27,7 @@ class PaypalPaymentProcessor(implicit settings: Settings,
   private val userAccount = settings.config("paypal.user")
 
   override def charge(account: String, amount: Double): Unit = {
-    println(s"[Paypal] Charging ${amount}€ to $account")
+    println(s"[Paypal] Charging ${amount}€ to $account using the account $userAccount")
     metrics.gauge("gmv", amount)
   }
 }
